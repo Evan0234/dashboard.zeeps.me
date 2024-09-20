@@ -19,22 +19,7 @@
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
                          0 0 40px rgba(255, 255, 255, 0.6); /* Cloud-like glow */
             text-align: center;
-            animation: bounce 5s infinite ease-in-out; /* Slow bounce animation */
-            will-change: transform; /* Optimize for performance */
-        }
-        @keyframes bounce {
-            0%, 100% {
-                transform: translate(0, 0); /* Original position */
-            }
-            25% {
-                transform: translate(-20vw, -20vh); /* Move up-left */
-            }
-            50% {
-                transform: translate(20vw, -20vh); /* Move up-right */
-            }
-            75% {
-                transform: translate(-20vw, 20vh); /* Move down-left */
-            }
+            pointer-events: none; /* Prevent mouse events on text */
         }
     </style>
 </head>
@@ -48,6 +33,53 @@
     <script src="index.js"></script>
     
     <script>
+        function randomPosition() {
+            const container = document.getElementById('content_container');
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            const randomX = Math.random() * (windowWidth - container.offsetWidth);
+            const randomY = Math.random() * (windowHeight - container.offsetHeight);
+
+            container.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        function animateBounce() {
+            const container = document.getElementById('content_container');
+            let isFalling = true;
+
+            const fallDuration = 2000; // 2 seconds to fall
+            const floatDuration = 3000; // 3 seconds to float
+
+            function fall() {
+                container.style.transition = `transform ${fallDuration}ms ease-in`;
+                container.style.transform += ` translateY(${window.innerHeight / 3}px)`;
+
+                setTimeout(() => {
+                    isFalling = false;
+                    float();
+                }, fallDuration);
+            }
+
+            function float() {
+                container.style.transition = `transform ${floatDuration}ms ease-out`;
+                container.style.transform = `translateY(${window.innerHeight / 3}px)`;
+
+                setTimeout(() => {
+                    randomPosition();
+                    container.style.transition = `none`;
+                    container.style.transform = `translateY(0)`;
+                    fall();
+                }, floatDuration);
+            }
+
+            fall();
+        }
+
+        // Start the animation
+        randomPosition(); // Set initial position
+        animateBounce(); // Start bouncing effect
+
         // Check if the user is logged in via cookie
         if (!document.cookie.includes('login_token')) {
             // If no user is signed in, redirect to login.zeeps.me
