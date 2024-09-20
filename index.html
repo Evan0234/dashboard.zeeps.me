@@ -21,7 +21,7 @@
             text-align: center;
             pointer-events: none; /* Prevent mouse events on text */
             transform-origin: center; /* Set origin for flipping */
-            transition: transform 0.5s ease-out; /* Animation for flipping */
+            transition: transform 0.2s ease; /* Smooth movement */
         }
     </style>
 </head>
@@ -36,68 +36,36 @@
     
     <script>
         const container = document.getElementById('content_container');
-        const gravity = 0.5; // Gravity effect
-        const bounceFactor = 0.7; // Bounce reduction factor
-        const flipFactor = -1; // Used for flipping horizontally
-        let velocityX = (Math.random() - 0.5) * 10; // Random initial horizontal velocity
-        let velocityY = (Math.random() - 0.5) * 10; // Random initial vertical velocity
-        let flippedX = 1; // Tracks the current horizontal flip state
+        let mouseX = 0;
+        let mouseY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        const easeFactor = 0.1; // The lower the number, the slower and smoother the easing
 
-        // Function to get the size of the viewport (tab size)
-        function getViewportSize() {
-            return {
-                width: window.innerWidth,
-                height: window.innerHeight
-            };
+        // Update the mouse position on mousemove
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Animate the container to follow the mouse with easing
+        function followMouse() {
+            // Calculate the difference between the current and target positions
+            const dx = mouseX - currentX;
+            const dy = mouseY - currentY;
+
+            // Adjust the current position by a fraction of the difference to create easing
+            currentX += dx * easeFactor;
+            currentY += dy * easeFactor;
+
+            // Apply the updated position to the container
+            container.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+            requestAnimationFrame(followMouse); // Continue the animation loop
         }
 
-        // Set initial position within viewport bounds
-        function setRandomInitialPosition() {
-            const viewport = getViewportSize();
-            const maxLeft = viewport.width - container.offsetWidth;
-            const maxTop = viewport.height - container.offsetHeight;
-            
-            // Set random position within the viewport bounds
-            container.style.left = Math.random() * maxLeft + 'px';
-            container.style.top = Math.random() * maxTop + 'px';
-        }
-
-        // Ensure text doesn't move out of bounds
-        function animateBounce() {
-            const rect = container.getBoundingClientRect();
-            const viewport = getViewportSize();
-            
-            // Apply gravity
-            velocityY += gravity;
-            
-            // Calculate the new positions
-            let newLeft = rect.left + velocityX;
-            let newTop = rect.top + velocityY;
-
-            // Horizontal boundary detection
-            if (newLeft <= 0 || newLeft + container.offsetWidth >= viewport.width) {
-                velocityX *= -bounceFactor; // Reverse horizontal velocity
-                flippedX *= flipFactor; // Flip horizontally
-                container.style.transform = `scaleX(${flippedX})`; // Apply flip animation
-                newLeft = Math.max(0, Math.min(newLeft, viewport.width - container.offsetWidth)); // Keep within bounds
-            }
-
-            // Vertical boundary detection
-            if (newTop <= 0 || newTop + container.offsetHeight >= viewport.height) {
-                velocityY *= -bounceFactor; // Reverse vertical velocity
-                newTop = Math.max(0, Math.min(newTop, viewport.height - container.offsetHeight)); // Keep within bounds
-            }
-
-            // Update the container's position
-            container.style.left = newLeft + 'px';
-            container.style.top = newTop + 'px';
-
-            requestAnimationFrame(animateBounce); // Continue animation
-        }
-
-        // Set initial random position and start the animation
-        setRandomInitialPosition();
-        animateBounce();
+        // Start the animation
+        followMouse();
 
         // Check if the user is logged in via cookie
         if (!document.cookie.includes('login_token')) {
