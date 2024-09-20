@@ -35,8 +35,9 @@
     <script>
         const container = document.getElementById('content_container');
         const fallDistance = window.innerHeight / 4; // Distance to fall
-        let direction = 1; // 1 for right, -1 for left
-        let bounceCount = 0; // Count bounces to change direction
+        let velocityY = 0; // Vertical velocity
+        const gravity = 0.5; // Gravity effect
+        const bounceFactor = 0.7; // Bounce reduction factor
 
         function randomPosition() {
             const windowWidth = window.innerWidth;
@@ -46,29 +47,32 @@
 
         function animateBounce() {
             randomPosition(); // Set initial position
+            velocityY = 0; // Reset velocity
 
             function drop() {
-                container.style.transition = `transform 0.5s ease-in`;
-                container.style.transform += ` translateY(${fallDistance}px)`; // Move down
+                velocityY += gravity; // Apply gravity
+                const currentY = parseFloat(container.style.transform.split('(')[1].split('px')[0].split(',')[1]) || 0;
 
-                setTimeout(() => {
-                    // Bounce effect
-                    bounceCount++;
-                    container.style.transition = `transform 0.3s ease-out`;
-                    container.style.transform += ` translateY(-${fallDistance}px)`; // Move back up
+                container.style.transform = `translate(${currentX}px, ${currentY + velocityY}px)`; // Update position
 
-                    // Change horizontal direction based on bounce count
-                    const sidewaysMovement = (bounceCount % 2 === 0 ? 50 : -50) * direction; // Move sideways
-                    container.style.transform += ` translateX(${sidewaysMovement}px)`;
+                const rect = container.getBoundingClientRect();
 
-                    // Update direction based on the new position
-                    if (container.getBoundingClientRect().left <= 0 || 
-                        container.getBoundingClientRect().right >= window.innerWidth) {
-                        direction *= -1; // Reverse direction if at edge
-                    }
+                // Check for bottom collision
+                if (rect.bottom >= window.innerHeight) {
+                    velocityY *= -bounceFactor; // Reverse velocity and apply bounce reduction
+                    const randomX = Math.random() * 100 - 50; // Random sideways movement
+                    container.style.transform += ` translateX(${randomX}px)`; // Move sideways on bounce
+                }
 
-                    drop(); // Continue the drop
-                }, 500); // Time to wait before bouncing back
+                // Check for corner collisions
+                if (rect.left <= 0 || rect.right >= window.innerWidth) {
+                    const randomBounceAngle = (Math.random() * 90) - 45; // Random angle for bounce
+                    velocityY *= -bounceFactor; // Reverse vertical velocity
+                    const sidewaysMovement = Math.cos(randomBounceAngle * Math.PI / 180) * 50; // Calculate sideways movement
+                    container.style.transform += ` translateX(${sidewaysMovement}px)`; // Move sideways on corner hit
+                }
+
+                requestAnimationFrame(drop); // Continue the drop
             }
 
             drop(); // Start the dropping effect
