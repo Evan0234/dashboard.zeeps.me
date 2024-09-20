@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>Dashboard</title>
@@ -13,32 +13,34 @@
         }
         #content_container {
             position: absolute;
-            font-size: 4em; /* Increase text size */
+            font-size: 6em; /* Big text size */
             font-weight: bold;
-            color: #007bff; /* Text color */
+            color: #ffffff; /* White color for cloud effect */
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
+                         0 0 40px rgba(255, 255, 255, 0.6); /* Cloud-like glow */
             text-align: center;
-            animation: bounce 2s infinite; /* Animation */
+            animation: bounce 5s infinite ease-in-out; /* Slow bounce animation */
             will-change: transform; /* Optimize for performance */
         }
         @keyframes bounce {
             0%, 100% {
-                transform: translate(0, 0);
+                transform: translate(0, 0); /* Original position */
             }
             25% {
-                transform: translate(-30vw, -30vh); /* Bounce to top left */
+                transform: translate(-20vw, -20vh); /* Move up-left */
             }
             50% {
-                transform: translate(30vw, -30vh); /* Bounce to top right */
+                transform: translate(20vw, -20vh); /* Move up-right */
             }
             75% {
-                transform: translate(-30vw, 30vh); /* Bounce to bottom left */
+                transform: translate(-20vw, 20vh); /* Move down-left */
             }
         }
     </style>
 </head>
 <body>
     <div id="content_container">
-        <h1>Welcome to your Dashboard</h1>
+        <h1>☁️ Welcome to your Dashboard ☁️</h1>
     </div>
     
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
