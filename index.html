@@ -13,7 +13,7 @@
         }
         #content_container {
             position: absolute;
-            font-size: 6em; /* Big text size */
+            font-size: 3em; /* Adjusted size to fit the screen */
             font-weight: bold;
             color: #ffffff; /* White color for cloud effect */
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
@@ -53,7 +53,7 @@
 
             function fall() {
                 container.style.transition = `transform ${fallDuration}ms ease-in`;
-                container.style.transform += ` translateY(${window.innerHeight / 3}px)`;
+                container.style.transform += ` translateY(${window.innerHeight / 4}px)`; // Adjust fall distance
 
                 setTimeout(() => {
                     isFalling = false;
@@ -63,7 +63,7 @@
 
             function float() {
                 container.style.transition = `transform ${floatDuration}ms ease-out`;
-                container.style.transform = `translateY(${window.innerHeight / 3}px)`;
+                container.style.transform = `translateY(${window.innerHeight / 4}px)`; // Maintain Y position
 
                 setTimeout(() => {
                     randomPosition();
