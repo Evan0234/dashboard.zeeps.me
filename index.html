@@ -36,6 +36,7 @@
         const container = document.getElementById('content_container');
         const fallDistance = window.innerHeight / 4; // Distance to fall
         let direction = 1; // 1 for right, -1 for left
+        let bounceCount = 0; // Count bounces to change direction
 
         function randomPosition() {
             const windowWidth = window.innerWidth;
@@ -46,21 +47,31 @@
         function animateBounce() {
             randomPosition(); // Set initial position
 
-            setInterval(() => {
-                container.style.transition = `transform 0.5s ease-in-out`;
+            function drop() {
+                container.style.transition = `transform 0.5s ease-in`;
                 container.style.transform += ` translateY(${fallDistance}px)`; // Move down
 
                 setTimeout(() => {
                     // Bounce effect
-                    container.style.transition = `transform 0.5s ease-out`;
+                    bounceCount++;
+                    container.style.transition = `transform 0.3s ease-out`;
                     container.style.transform += ` translateY(-${fallDistance}px)`; // Move back up
 
-                    // Change horizontal direction when bouncing
-                    direction *= -1;
-                    const sidewaysMovement = 50 * direction; // Move sideways
+                    // Change horizontal direction based on bounce count
+                    const sidewaysMovement = (bounceCount % 2 === 0 ? 50 : -50) * direction; // Move sideways
                     container.style.transform += ` translateX(${sidewaysMovement}px)`;
+
+                    // Update direction based on the new position
+                    if (container.getBoundingClientRect().left <= 0 || 
+                        container.getBoundingClientRect().right >= window.innerWidth) {
+                        direction *= -1; // Reverse direction if at edge
+                    }
+
+                    drop(); // Continue the drop
                 }, 500); // Time to wait before bouncing back
-            }, 2000); // Repeat every 2 seconds
+            }
+
+            drop(); // Start the dropping effect
         }
 
         // Start the animation
