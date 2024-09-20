@@ -43,43 +43,60 @@
         let velocityY = (Math.random() - 0.5) * 10; // Random initial vertical velocity
         let flippedX = 1; // Tracks the current horizontal flip state
 
-        // Set random initial position within window bounds
-        container.style.left = Math.random() * (window.innerWidth - container.offsetWidth) + 'px';
-        container.style.top = Math.random() * (window.innerHeight - container.offsetHeight) + 'px';
+        // Function to get the size of the viewport (tab size)
+        function getViewportSize() {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        }
 
+        // Set initial position within viewport bounds
+        function setRandomInitialPosition() {
+            const viewport = getViewportSize();
+            const maxLeft = viewport.width - container.offsetWidth;
+            const maxTop = viewport.height - container.offsetHeight;
+            
+            // Set random position within the viewport bounds
+            container.style.left = Math.random() * maxLeft + 'px';
+            container.style.top = Math.random() * maxTop + 'px';
+        }
+
+        // Ensure text doesn't move out of bounds
         function animateBounce() {
             const rect = container.getBoundingClientRect();
+            const viewport = getViewportSize();
             
             // Apply gravity
             velocityY += gravity;
             
-            // Update position based on velocity
-            container.style.left = (rect.left + velocityX) + 'px';
-            container.style.top = (rect.top + velocityY) + 'px';
-            
-            // Check for horizontal collisions (left and right edges)
-            if (rect.left <= 0 || rect.right >= window.innerWidth) {
+            // Calculate the new positions
+            let newLeft = rect.left + velocityX;
+            let newTop = rect.top + velocityY;
+
+            // Horizontal boundary detection
+            if (newLeft <= 0 || newLeft + container.offsetWidth >= viewport.width) {
                 velocityX *= -bounceFactor; // Reverse horizontal velocity
-                
-                // Flip text horizontally and animate it
-                flippedX *= flipFactor;
-                container.style.transform = `scaleX(${flippedX})`;
+                flippedX *= flipFactor; // Flip horizontally
+                container.style.transform = `scaleX(${flippedX})`; // Apply flip animation
+                newLeft = Math.max(0, Math.min(newLeft, viewport.width - container.offsetWidth)); // Keep within bounds
             }
 
-            // Check for vertical collisions (top and bottom edges)
-            if (rect.top <= 0 || rect.bottom >= window.innerHeight) {
+            // Vertical boundary detection
+            if (newTop <= 0 || newTop + container.offsetHeight >= viewport.height) {
                 velocityY *= -bounceFactor; // Reverse vertical velocity
-                
-                // If hitting the bottom, reduce velocity more (damping effect)
-                if (rect.bottom >= window.innerHeight) {
-                    velocityY += (Math.random() - 0.5) * 5; // Add some random vertical movement
-                }
+                newTop = Math.max(0, Math.min(newTop, viewport.height - container.offsetHeight)); // Keep within bounds
             }
 
-            requestAnimationFrame(animateBounce); // Continue animation loop
+            // Update the container's position
+            container.style.left = newLeft + 'px';
+            container.style.top = newTop + 'px';
+
+            requestAnimationFrame(animateBounce); // Continue animation
         }
 
-        // Start the animation
+        // Set initial random position and start the animation
+        setRandomInitialPosition();
         animateBounce();
 
         // Check if the user is logged in via cookie
