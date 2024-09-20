@@ -20,6 +20,8 @@
                          0 0 40px rgba(255, 255, 255, 0.6); /* Cloud-like glow */
             text-align: center;
             pointer-events: none; /* Prevent mouse events on text */
+            transform-origin: center; /* Set origin for flipping */
+            transition: transform 0.5s ease-out; /* Animation for flipping */
         }
     </style>
 </head>
@@ -36,10 +38,12 @@
         const container = document.getElementById('content_container');
         const gravity = 0.5; // Gravity effect
         const bounceFactor = 0.7; // Bounce reduction factor
+        const flipFactor = -1; // Used for flipping horizontally
         let velocityX = (Math.random() - 0.5) * 10; // Random initial horizontal velocity
         let velocityY = (Math.random() - 0.5) * 10; // Random initial vertical velocity
+        let flippedX = 1; // Tracks the current horizontal flip state
 
-        // Random initial position
+        // Set random initial position within window bounds
         container.style.left = Math.random() * (window.innerWidth - container.offsetWidth) + 'px';
         container.style.top = Math.random() * (window.innerHeight - container.offsetHeight) + 'px';
 
@@ -49,22 +53,30 @@
             // Apply gravity
             velocityY += gravity;
             
-            // Move container
+            // Update position based on velocity
             container.style.left = (rect.left + velocityX) + 'px';
             container.style.top = (rect.top + velocityY) + 'px';
             
-            // Check for collisions with edges
+            // Check for horizontal collisions (left and right edges)
             if (rect.left <= 0 || rect.right >= window.innerWidth) {
                 velocityX *= -bounceFactor; // Reverse horizontal velocity
-                velocityX += (Math.random() - 0.5) * 5; // Add random horizontal movement
-            }
-            if (rect.top <= 0 || rect.bottom >= window.innerHeight) {
-                velocityY *= -bounceFactor; // Reverse vertical velocity
-                velocityX += (Math.random() - 0.5) * 5; // Add random horizontal movement
-                velocityY += (Math.random() - 0.5) * 5; // Add random vertical movement
+                
+                // Flip text horizontally and animate it
+                flippedX *= flipFactor;
+                container.style.transform = `scaleX(${flippedX})`;
             }
 
-            requestAnimationFrame(animateBounce);
+            // Check for vertical collisions (top and bottom edges)
+            if (rect.top <= 0 || rect.bottom >= window.innerHeight) {
+                velocityY *= -bounceFactor; // Reverse vertical velocity
+                
+                // If hitting the bottom, reduce velocity more (damping effect)
+                if (rect.bottom >= window.innerHeight) {
+                    velocityY += (Math.random() - 0.5) * 5; // Add some random vertical movement
+                }
+            }
+
+            requestAnimationFrame(animateBounce); // Continue animation loop
         }
 
         // Start the animation
