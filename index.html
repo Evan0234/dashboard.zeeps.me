@@ -48,7 +48,7 @@
             mouseY = e.clientY;
         });
 
-        // Animate the container to follow the mouse with easing
+        // Animate the container to follow the mouse with easing and centering
         function followMouse() {
             // Calculate the difference between the current and target positions
             const dx = mouseX - currentX;
@@ -58,8 +58,12 @@
             currentX += dx * easeFactor;
             currentY += dy * easeFactor;
 
-            // Apply the updated position to the container
-            container.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            // Get the container dimensions
+            const containerWidth = container.offsetWidth;
+            const containerHeight = container.offsetHeight;
+
+            // Apply the updated position to the container (centered on the mouse)
+            container.style.transform = `translate(${currentX - containerWidth / 2}px, ${currentY - containerHeight / 2}px)`;
 
             requestAnimationFrame(followMouse); // Continue the animation loop
         }
