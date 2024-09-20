@@ -6,9 +6,33 @@
     <link rel="stylesheet" type="text/css" href="index.css">
     <style>
         body {
-            background: #e0f7fa; 
+            background: #e0f7fa; /* Background color */
             margin: 0;
             font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+        }
+        #content_container {
+            position: absolute;
+            font-size: 4em; /* Increase text size */
+            font-weight: bold;
+            color: #007bff; /* Text color */
+            text-align: center;
+            animation: bounce 2s infinite; /* Animation */
+            will-change: transform; /* Optimize for performance */
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(-30vw, -30vh); /* Bounce to top left */
+            }
+            50% {
+                transform: translate(30vw, -30vh); /* Bounce to top right */
+            }
+            75% {
+                transform: translate(-30vw, 30vh); /* Bounce to bottom left */
+            }
         }
     </style>
 </head>
