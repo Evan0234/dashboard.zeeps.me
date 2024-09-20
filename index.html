@@ -33,51 +33,37 @@
     <script src="index.js"></script>
     
     <script>
+        const container = document.getElementById('content_container');
+        const fallDistance = window.innerHeight / 4; // Distance to fall
+        let direction = 1; // 1 for right, -1 for left
+
         function randomPosition() {
-            const container = document.getElementById('content_container');
             const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-
             const randomX = Math.random() * (windowWidth - container.offsetWidth);
-            const randomY = Math.random() * (windowHeight - container.offsetHeight);
-
-            container.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            container.style.transform = `translate(${randomX}px, 0)`;
         }
 
         function animateBounce() {
-            const container = document.getElementById('content_container');
-            let isFalling = true;
+            randomPosition(); // Set initial position
 
-            const fallDuration = 2000; // 2 seconds to fall
-            const floatDuration = 3000; // 3 seconds to float
-
-            function fall() {
-                container.style.transition = `transform ${fallDuration}ms ease-in`;
-                container.style.transform += ` translateY(${window.innerHeight / 4}px)`; // Adjust fall distance
+            setInterval(() => {
+                container.style.transition = `transform 0.5s ease-in-out`;
+                container.style.transform += ` translateY(${fallDistance}px)`; // Move down
 
                 setTimeout(() => {
-                    isFalling = false;
-                    float();
-                }, fallDuration);
-            }
+                    // Bounce effect
+                    container.style.transition = `transform 0.5s ease-out`;
+                    container.style.transform += ` translateY(-${fallDistance}px)`; // Move back up
 
-            function float() {
-                container.style.transition = `transform ${floatDuration}ms ease-out`;
-                container.style.transform = `translateY(${window.innerHeight / 4}px)`; // Maintain Y position
-
-                setTimeout(() => {
-                    randomPosition();
-                    container.style.transition = `none`;
-                    container.style.transform = `translateY(0)`;
-                    fall();
-                }, floatDuration);
-            }
-
-            fall();
+                    // Change horizontal direction when bouncing
+                    direction *= -1;
+                    const sidewaysMovement = 50 * direction; // Move sideways
+                    container.style.transform += ` translateX(${sidewaysMovement}px)`;
+                }, 500); // Time to wait before bouncing back
+            }, 2000); // Repeat every 2 seconds
         }
 
         // Start the animation
-        randomPosition(); // Set initial position
         animateBounce(); // Start bouncing effect
 
         // Check if the user is logged in via cookie
