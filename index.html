@@ -95,14 +95,8 @@
         document.getElementById('logoutBtn').addEventListener('click', function() {
             firebase.auth().signOut().then(() => {
                 console.log('User signed out');
-
-                // Remove the login_token cookie across all subdomains
                 document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
-
-                // Add a small delay to ensure the cookie is fully removed
-                setTimeout(() => {
-                    window.location.href = 'https://login.zeeps.me';
-                }, 500);
+                window.location.href = 'https://login.zeeps.me';
             }).catch((error) => {
                 console.error('Logout failed:', error);
             });
@@ -112,17 +106,21 @@
         if (!document.cookie.includes('login_token')) {
             window.location.href = 'https://login.zeeps.me';
         } else {
-            // Verify user's email verification status
             firebase.auth().onAuthStateChanged(user => {
                 if (user) {
-                    // Check if email is verified
-                    if (!user.emailVerified) {
-                        alert('Your email is not verified. You will be logged out.');
-                        firebase.auth().signOut().then(() => {
-                            document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
-                            window.location.href = 'https://login.zeeps.me';
-                        });
-                    }
+                    // Refresh the user's ID token to ensure we have the latest info
+                    user.getIdToken(true).then(() => {
+                        // Check if email is verified
+                        if (!user.emailVerified) {
+                            alert('Your email is not verified. You will be logged out.');
+                            firebase.auth().signOut().then(() => {
+                                document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
+                                window.location.href = 'https://login.zeeps.me';
+                            });
+                        }
+                    }).catch(error => {
+                        console.error('Error refreshing token:', error);
+                    });
                 }
             });
         }
