@@ -111,6 +111,20 @@
         // Check if the user is logged in via cookie
         if (!document.cookie.includes('login_token')) {
             window.location.href = 'https://login.zeeps.me';
+        } else {
+            // Verify user's email verification status
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    // Check if email is verified
+                    if (!user.emailVerified) {
+                        alert('Your email is not verified. You will be logged out.');
+                        firebase.auth().signOut().then(() => {
+                            document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
+                            window.location.href = 'https://login.zeeps.me';
+                        });
+                    }
+                }
+            });
         }
     </script>
 </body>
