@@ -5,26 +5,25 @@
     <title>Dashboard</title>
     <style>
         body {
-            background: #e0f7fa; /* Background color */
+            background: #e0f7fa;
             margin: 0;
             font-family: Arial, sans-serif;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
         }
 
         #content_container {
             position: absolute;
-            font-size: 3em; /* Adjusted size to fit the screen */
+            font-size: 3em;
             font-weight: bold;
-            color: #ffffff; /* White color for cloud effect */
+            color: #ffffff;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 
-                         0 0 40px rgba(255, 255, 255, 0.6); /* Cloud-like glow */
+                         0 0 40px rgba(255, 255, 255, 0.6);
             text-align: center;
-            pointer-events: none; /* Prevent mouse events on text */
-            transform-origin: center; /* Set origin for flipping */
-            transition: transform 0.2s ease; /* Smooth movement */
+            pointer-events: none;
+            transform-origin: center;
+            transition: transform 0.2s ease;
         }
 
-        /* Style for the settings icon */
         #settings {
             position: absolute;
             top: 20px;
@@ -35,7 +34,6 @@
             color: #333;
         }
 
-        /* Dropdown menu */
         #settings_menu {
             display: none;
             position: absolute;
@@ -67,17 +65,13 @@
         <h1>☁️ Welcome to your Dashboard ☁️</h1>
     </div>
 
-    <!-- Settings gear icon -->
     <div id="settings">⚙️</div>
-
-    <!-- Dropdown menu -->
     <div id="settings_menu">
         <button id="logoutBtn">Logout</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
-
     <script>
         // Firebase configuration
         var firebaseConfig = {
@@ -89,39 +83,8 @@
             appId: "1:343221159933:web:e6c3e1e7ec6161a48dfb94",
             measurementId: "G-DE7X1YKVGY"
         };
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
-        const container = document.getElementById('content_container');
-        let mouseX = 0;
-        let mouseY = 0;
-        let currentX = 0;
-        let currentY = 0;
-        const easeFactor = 0.1; // The lower the number, the slower and smoother the easing
-
-        // Update the mouse position on mousemove
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        // Animate the container to follow the mouse with easing and centering
-        function followMouse() {
-            const dx = mouseX - currentX;
-            const dy = mouseY - currentY;
-            currentX += dx * easeFactor;
-            currentY += dy * easeFactor;
-
-            const containerWidth = container.offsetWidth;
-            const containerHeight = container.offsetHeight;
-            container.style.transform = `translate(${currentX - containerWidth / 2}px, ${currentY - containerHeight / 2}px)`;
-
-            requestAnimationFrame(followMouse); // Continue the animation loop
-        }
-
-        followMouse();
-
-        // Toggle settings menu visibility
         const settingsIcon = document.getElementById('settings');
         const settingsMenu = document.getElementById('settings_menu');
         settingsIcon.addEventListener('click', function() {
@@ -130,16 +93,16 @@
 
         // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', function() {
-            // Firebase logout
             firebase.auth().signOut().then(() => {
-                // Successfully signed out
                 console.log('User signed out');
-                
-                // Remove the login_token cookie
-                document.cookie = "login_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                
-                // Redirect to login page
-                window.location.href = 'https://login.zeeps.me';
+
+                // Remove the login_token cookie across all subdomains
+                document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
+
+                // Add a small delay to ensure the cookie is fully removed
+                setTimeout(() => {
+                    window.location.href = 'https://login.zeeps.me';
+                }, 500);
             }).catch((error) => {
                 console.error('Logout failed:', error);
             });
