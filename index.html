@@ -11,6 +11,7 @@
             font-family: Arial, sans-serif;
             overflow: hidden; /* Prevent scrolling */
         }
+
         #content_container {
             position: absolute;
             font-size: 3em; /* Adjusted size to fit the screen */
@@ -23,17 +24,52 @@
             transform-origin: center; /* Set origin for flipping */
             transition: transform 0.2s ease; /* Smooth movement */
         }
+
+        /* Style for the settings section */
+        #settings {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #logoutBtn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #logoutBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        #settings h2 {
+            margin: 0 0 10px 0;
+        }
     </style>
 </head>
 <body>
     <div id="content_container">
         <h1>☁️ Welcome to your Dashboard ☁️</h1>
     </div>
+
+    <!-- Settings section -->
+    <div id="settings">
+        <h2>Settings</h2>
+        <button id="logoutBtn">Logout</button>
+    </div>
     
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="index.js"></script>
-    
+
     <script>
         const container = document.getElementById('content_container');
         let mouseX = 0;
@@ -50,30 +86,35 @@
 
         // Animate the container to follow the mouse with easing and centering
         function followMouse() {
-            // Calculate the difference between the current and target positions
             const dx = mouseX - currentX;
             const dy = mouseY - currentY;
-
-            // Adjust the current position by a fraction of the difference to create easing
             currentX += dx * easeFactor;
             currentY += dy * easeFactor;
 
-            // Get the container dimensions
             const containerWidth = container.offsetWidth;
             const containerHeight = container.offsetHeight;
-
-            // Apply the updated position to the container (centered on the mouse)
             container.style.transform = `translate(${currentX - containerWidth / 2}px, ${currentY - containerHeight / 2}px)`;
 
             requestAnimationFrame(followMouse); // Continue the animation loop
         }
 
-        // Start the animation
         followMouse();
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            // Firebase logout (or custom token removal)
+            firebase.auth().signOut().then(() => {
+                // Remove login token from cookies
+                document.cookie = "login_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                // Redirect to login page
+                window.location.href = 'https://login.zeeps.me';
+            }).catch((error) => {
+                console.error('Logout failed:', error);
+            });
+        });
 
         // Check if the user is logged in via cookie
         if (!document.cookie.includes('login_token')) {
-            // If no user is signed in, redirect to login.zeeps.me
             window.location.href = 'https://login.zeeps.me';
         }
     </script>
