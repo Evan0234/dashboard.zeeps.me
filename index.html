@@ -25,12 +25,24 @@
             transition: transform 0.2s ease; /* Smooth movement */
         }
 
-        /* Style for the settings section */
+        /* Style for the settings icon */
         #settings {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: #ffffff;
+            background: none;
+            cursor: pointer;
+            font-size: 2em;
+            color: #333;
+        }
+
+        /* Dropdown menu */
+        #settings_menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background: #fff;
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -49,10 +61,6 @@
         #logoutBtn:hover {
             background-color: #d32f2f;
         }
-
-        #settings h2 {
-            margin: 0 0 10px 0;
-        }
     </style>
 </head>
 <body>
@@ -60,17 +68,32 @@
         <h1>☁️ Welcome to your Dashboard ☁️</h1>
     </div>
 
-    <!-- Settings section -->
-    <div id="settings">
-        <h2>Settings</h2>
+    <!-- Settings gear icon -->
+    <div id="settings">⚙️</div>
+
+    <!-- Dropdown menu -->
+    <div id="settings_menu">
         <button id="logoutBtn">Logout</button>
     </div>
-    
+
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="index.js"></script>
 
     <script>
+        // Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAjl5C7TvjmtxPc4_eno6vRMIVjciLiV04",
+            authDomain: "zeeplogin.firebaseapp.com",
+            projectId: "zeeplogin",
+            storageBucket: "zeeplogin.appspot.com",
+            messagingSenderId: "343221159933",
+            appId: "1:343221159933:web:e6c3e1e7ec6161a48dfb94",
+            measurementId: "G-DE7X1YKVGY"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
         const container = document.getElementById('content_container');
         let mouseX = 0;
         let mouseY = 0;
@@ -99,6 +122,13 @@
         }
 
         followMouse();
+
+        // Toggle settings menu visibility
+        const settingsIcon = document.getElementById('settings');
+        const settingsMenu = document.getElementById('settings_menu');
+        settingsIcon.addEventListener('click', function() {
+            settingsMenu.style.display = settingsMenu.style.display === 'none' ? 'block' : 'none';
+        });
 
         // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', function() {
