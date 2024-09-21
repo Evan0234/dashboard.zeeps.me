@@ -132,10 +132,14 @@
 
         // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', function() {
-            // Firebase logout (or custom token removal)
+            // Firebase logout
             firebase.auth().signOut().then(() => {
-                // Remove login token from cookies
+                // Successfully signed out
+                console.log('User signed out');
+                
+                // Remove the login_token cookie
                 document.cookie = "login_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                
                 // Redirect to login page
                 window.location.href = 'https://login.zeeps.me';
             }).catch((error) => {
