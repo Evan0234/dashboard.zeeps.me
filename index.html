@@ -104,7 +104,7 @@
 
         // Check if the user is logged in via cookie
         if (!document.cookie.includes('login_token')) {
-            window.location.href = 'https://login.zeeps.me';
+            window.location.href = 'https://login.zeeps.me'; // Redirect to login if not logged in
         } else {
             firebase.auth().onAuthStateChanged(user => {
                 if (user) {
@@ -113,34 +113,14 @@
                             alert('Your email is not verified. You will be logged out.');
                             firebase.auth().signOut().then(() => {
                                 document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
-                                window.location.href = 'https://login.zeeps.me';
+                                window.location.href = 'https://login.zeeps.me'; // Redirect to login if email not verified
                             });
                         }
                     });
+                } else {
+                    window.location.href = 'https://login.zeeps.me'; // Redirect if no user found
                 }
             });
-        }
-
-        // Registration function
-        function register() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(userCredential => {
-                    const user = userCredential.user;
-
-                    // Send verification email
-                    return user.sendEmailVerification()
-                        .then(() => {
-                            alert('Verification email sent. Please verify your email before proceeding.');
-                            // Do not log in the user; they must verify their email first
-                        });
-                })
-                .catch(error => {
-                    console.error('Error during registration:', error);
-                    alert(error.message);
-                });
         }
     </script>
 </body>
