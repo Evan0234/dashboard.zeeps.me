@@ -91,6 +91,24 @@
             settingsMenu.style.display = settingsMenu.style.display === 'none' ? 'block' : 'none';
         });
 
+        // Check if the user is logged in
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                // User is signed in
+                if (!user.emailVerified) {
+                    alert('Your email is not verified. Please verify your email before using the dashboard.');
+                    firebase.auth().signOut().then(() => {
+                        document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
+                        window.location.href = 'https://login.zeeps.me'; // Redirect to login
+                    });
+                }
+            } else {
+                // No user is signed in
+                alert('You are not logged in. Redirecting to the login page.');
+                window.location.href = 'https://login.zeeps.me'; // Redirect to login
+            }
+        });
+
         // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', function() {
             firebase.auth().signOut().then(() => {
@@ -101,27 +119,6 @@
                 console.error('Logout failed:', error);
             });
         });
-
-        // Check if the user is logged in via cookie
-        if (!document.cookie.includes('login_token')) {
-            window.location.href = 'https://login.zeeps.me'; // Redirect to login if not logged in
-        } else {
-            firebase.auth().onAuthStateChanged(user => {
-                if (user) {
-                    user.getIdToken(true).then(() => {
-                        if (!user.emailVerified) {
-                            alert('Your email is not verified. You will be logged out.');
-                            firebase.auth().signOut().then(() => {
-                                document.cookie = "login_token=; max-age=0; path=/; domain=.zeeps.me;";
-                                window.location.href = 'https://login.zeeps.me'; // Redirect to login if email not verified
-                            });
-                        }
-                    });
-                } else {
-                    window.location.href = 'https://login.zeeps.me'; // Redirect if no user found
-                }
-            });
-        }
     </script>
 </body>
 </html>
