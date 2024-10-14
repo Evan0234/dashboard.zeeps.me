@@ -71,7 +71,7 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com.firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script>
         // Firebase configuration
         var firebaseConfig = {
@@ -111,6 +111,12 @@
             }).catch((error) => {
                 console.error('Logout failed:', error);
             });
+        });
+
+        // Toggle settings menu
+        document.getElementById('settings').addEventListener('click', function() {
+            const menu = document.getElementById('settings_menu');
+            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
         });
     </script>
 </body>
